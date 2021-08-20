@@ -286,7 +286,6 @@ def show_evolution(tensor, history=[], title=None, y_range=None):
     plt.rcParams['figure.figsize'] = [10, 5]
     plt.figure()
     plt.ion()
-    # Image
     plt.subplot(121)
     plt.imshow(image)
     plt.axis('off')
@@ -324,8 +323,10 @@ def show_combined(params):
         x_offset += params['image_width']
 
     combined.save(params['combined_image_path'])
-    combined.show()
+    plt.figure()
+    plt.ion()
     plt.title('All images')
+    plt.imshow(combined)
 
 
 def get_initial_image(params, content_img):
@@ -372,7 +373,6 @@ def run(params,
     history = []
     max_iter = params['n_iter']
     while iterations <= max_iter:
-        print('Iteration: %s' % iterations)
         # Compute the loss and backpropagate to the input_image.
         # (The LBFGS optimizer only accept work through closures.)
 
@@ -419,10 +419,15 @@ def run(params,
     img_final = img.resize(original_image_size, resample=Image.BICUBIC)
     img_final.save(params['output_image_path'])
     print('final image size: ', img_final.size)
-    img_final.show()
+
+    plt.figure()
+    plt.ion()
+    plt.title('All images')
     plt.title('Final image')
+    plt.imshow(img_final)
 
     show_combined(params)
+    print('All done')
 
 
 def upload_images():
@@ -435,14 +440,15 @@ def upload_images():
 
 
 def pipeline():
-    # get parameters
+    # get parameters, can change any variables with keywords
     params = get_params()
 
-    # get the device
+    # get the device, cpu or gpu
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print('device: %s' % device)
 
-    # upload the images if on Google Colab
+    # upload the images if on Google Colab, otherwise expects
+    # to find content.png and style.png in root dir
     upload_images()
 
     # get the content image
