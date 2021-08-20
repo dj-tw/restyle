@@ -20,10 +20,10 @@ iterations = 0
 
 def upload_files():
     # if in Google colab, upload files each time
-    if os.path.exists('style.png'):
+    if os.path.isfile('style.png'):
         os.remove('style.png')
 
-    if os.path.exists('content.png'):
+    if os.path.isfile('content.png'):
         os.remove('content.png')
 
     from google.colab import files
