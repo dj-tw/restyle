@@ -24,7 +24,7 @@ def upload_files():
     try:
         os.remove('style.png')
         os.remove('content.png')
-    except OSError:
+    except FileNotFoundError:
         pass
 
     uploaded = files.upload()
