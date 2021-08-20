@@ -35,13 +35,13 @@ def upload_files():
 
 def get_params(**kwargs):
 
-    params = {'n_iter': 200,
+    params = {'n_iter': 500,
               'image_width':  128,
               'image_height': 128,
               'content_weight': 1.0,
-              'style_weight': 30.0,
+              'style_weight': 1.0,
               'total_variation_weight': 50.0,
-              'input_image': 'content',
+              'input_image': 'hybrid',
               'content_layers': ['conv_1', 'conv_2', 'conv_4'],
               'style_layers': ['conv_2', 'conv_3', 'conv_4', 'conv_7', 'conv_10', 'conv_8'],
               'content_image_path': 'content.png',
@@ -50,7 +50,10 @@ def get_params(**kwargs):
               'combined_image_path': 'combined.png',
               'style_file': 'style.png',
               'content_file': 'content.png',
-              'plot_y_range': (0.5, 3000)}
+              'plot_y_range': (0.5, 10000),
+              'hybrid_weight_content': 0.93,
+              'show_image_interval': 50,
+              'initial_seed': 420}
 
     # any overrides?
     for k, v in kwargs.items():
@@ -311,8 +314,8 @@ def show_evolution(tensor, history=[], title=None, y_range=None):
     plt.draw()
     plt.pause(0.001)
     # Display a textual message
-    print('Style Loss : {:4f} Content Loss: {:4f} Variation Loss: {:4f} Sum: {:4f}'.format(
-        history[0][-1], history[1][-1], history[2][-1], history[3][-1]))
+    message = 'Iter: {}, Style Loss : {:4f} Content Loss: {:4f} Variation Loss: {:4f} Sum: {:4f}'
+    print(message.format(iterations, history[0][-1], history[1][-1], history[2][-1], history[3][-1]))
 
 
 def show_combined(params):
@@ -334,11 +337,18 @@ def show_combined(params):
     plt.imshow(combined)
 
 
-def get_initial_image(params, content_img):
+def get_initial_image(params, content_img, device):
+    torch.manual_seed(params['initial_seed'])
     if params['input_image'] == 'noise':
         input_img = torch.randn(content_img.data.size(), device=device)
     elif params['input_image'] == 'content':
         input_img = content_img.clone()
+    elif params['input_image'] == 'hybrid':
+        input_img_noise = torch.randn(content_img.data.size(), device=device)
+        input_img_content = content_img.clone()
+        w_content = params['hybrid_weight_content']
+        w_noise = 1.0 - w_content
+        input_img = (w_noise * input_img_noise + w_content * input_img_content)
     else:
         raise ValueError('input_image must be noise or content')
 
@@ -357,7 +367,7 @@ def run(params,
     content_img = image_to_tensor(content_image, device)
     style_img = image_to_tensor(style_image, device)
 
-    input_img = get_initial_image(params, content_img)
+    input_img = get_initial_image(params, content_img, device)
     cnn, cnn_normalization_mean, cnn_normalization_std = get_model(device)
 
     print('Building the style transfer model..')
@@ -402,7 +412,7 @@ def run(params,
             history += [[style_score.item(), content_score.item(), variation_score.item(), loss.item()]]
 
             # If the iteration is a multiple of 100, display some informations
-            if iterations % 100 == 0:
+            if iterations % params['show_image_interval'] == 0:
                 show_evolution(input_img.data.clone().detach().clamp(0, 1),
                                history,
                                title="Iteration %d:" % iterations,
