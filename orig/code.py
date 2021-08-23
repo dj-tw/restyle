@@ -389,7 +389,7 @@ elif INPUT_IMAGE == 'style':
 else:
   image = open_image(INPUT_IMAGE).resize((IMAGE_SIZE, IMAGE_SIZE))
   input_img = image_to_tensor(image)
-  input_img += torch.randn(content_img.data.size(), device=device)*0.1
+  input_img += torch.randn(content_img.data.size(), device=device)*0.05
 
 # To visualise it better, instead of clipping values, we rescale
 # them to fit [-1,1], and convert to an image. This is mostly because
