@@ -350,7 +350,7 @@ def get_initial_image(params, content_img, device):
         w_noise = 1.0 - w_content
         input_img = (w_noise * input_img_noise + w_content * input_img_content)
     else:
-        image = open_image(INPUT_IMAGE).resize((IMAGE_SIZE, IMAGE_SIZE))
+        image = open_image(params['input_image']).resize(content_img.data.size())
         input_img = image_to_tensor(image)
         input_img += torch.randn(content_img.data.size(), device=device) * 0.05
 
