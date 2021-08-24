@@ -399,46 +399,47 @@ def run(params,
     iterations = 0
     history = []
     max_iter = params['n_iter']
-    while iterations <= max_iter:
+    keep_going = True
+    while iterations <= max_iter and keep_going:
         # Compute the loss and backpropagate to the input_image.
         # (The LBFGS optimizer only accept work through closures.)
+        try:
+            def closure():
+                global history
+                global iterations
 
-        if os.path.isfile('STOPFILE'):
+                optimizer.zero_grad()
+
+                # Compute the total variation loss
+                variation_score = total_variation_loss(input_img) * params['total_variation_weight']
+                # Compute the features through the model
+                model(input_img)
+                # Compute style and content losses
+                style_score = sum(sl.loss for sl in style_losses)
+                style_score *= params['style_weight'] / len(style_losses)
+                content_score = sum(cl.loss for cl in content_losses)
+                content_score *= params['content_weight'] / len(content_losses)
+                # Our global loss is the sum of the 3 values
+                loss = style_score + content_score + variation_score
+                # Save the value of loss in order to draw them as a graph
+                history += [[style_score.item(), content_score.item(), variation_score.item(), loss.item()]]
+
+                # If the iteration is a multiple of 100, display some informations
+                if iterations % params['show_image_interval'] == 0:
+                    show_evolution(input_img.data.clone().detach().clamp(0, 1),
+                                   history,
+                                   title="Iteration %d:" % iterations,
+                                   y_range=params['plot_y_range'])
+
+                iterations += 1
+                # Backpropagate gradients and leave the optimizer do his job.
+                loss.backward()
+                return loss
+
+            optimizer.step(closure)
+        except KeyboardInterrupt:
+            print('Interrupt detected')
             break
-
-        def closure():
-            global history
-            global iterations
-
-            optimizer.zero_grad()
-
-            # Compute the total variation loss
-            variation_score = total_variation_loss(input_img) * params['total_variation_weight']
-            # Compute the features through the model
-            model(input_img)
-            # Compute style and content losses
-            style_score = sum(sl.loss for sl in style_losses)
-            style_score *= params['style_weight'] / len(style_losses)
-            content_score = sum(cl.loss for cl in content_losses)
-            content_score *= params['content_weight'] / len(content_losses)
-            # Our global loss is the sum of the 3 values
-            loss = style_score + content_score + variation_score
-            # Save the value of loss in order to draw them as a graph
-            history += [[style_score.item(), content_score.item(), variation_score.item(), loss.item()]]
-
-            # If the iteration is a multiple of 100, display some informations
-            if iterations % params['show_image_interval'] == 0:
-                show_evolution(input_img.data.clone().detach().clamp(0, 1),
-                               history,
-                               title="Iteration %d:" % iterations,
-                               y_range=params['plot_y_range'])
-
-            iterations += 1
-            # Backpropagate gradients and leave the optimizer do his job.
-            loss.backward()
-            return loss
-
-        optimizer.step(closure)
 
     # @title Our beautiful result
     img = tensor_to_image(input_img)
