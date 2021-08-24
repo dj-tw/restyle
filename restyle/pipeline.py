@@ -437,8 +437,8 @@ def run(params,
                 return loss
 
             optimizer.step(closure)
-        except KeyboardInterrupt:
-            print('Interrupt detected')
+        except:
+            print('Interrupt or exception detected')
             break
 
     # @title Our beautiful result
