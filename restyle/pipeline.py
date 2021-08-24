@@ -35,12 +35,12 @@ def upload_files():
 
 def get_params(**kwargs):
 
-    params = {'n_iter': 500,
+    params = {'n_iter': 100,
               'image_width':  128,
               'image_height': 128,
               'content_weight': 1.0,
               'style_weight': 1.0,
-              'total_variation_weight': 50.0,
+              'total_variation_weight': 10.0,
               'input_image': 'hybrid',
               'content_layers': ['conv_1', 'conv_2', 'conv_4'],
               'style_layers': ['conv_2', 'conv_3', 'conv_4', 'conv_7', 'conv_10', 'conv_8'],
@@ -51,7 +51,8 @@ def get_params(**kwargs):
               'style_file': 'style.png',
               'content_file': 'content.png',
               'plot_y_range': (0.5, 10000),
-              'hybrid_weight_content': 0.93,
+              'hybrid_weight_content': 0.90,
+              'hybrid_weight_style': 0.0,
               'show_image_interval': 50,
               'initial_seed': 420}
 
@@ -337,18 +338,27 @@ def show_combined(params):
     plt.imshow(combined)
 
 
-def get_initial_image(params, content_img, device):
+def get_initial_image(params, content_img, style_img, device):
     torch.manual_seed(params['initial_seed'])
     if params['input_image'] == 'noise':
         input_img = torch.randn(content_img.data.size(), device=device)
     elif params['input_image'] == 'content':
         input_img = content_img.clone()
+    elif params['input_image'] == 'style':
+        input_img = style_img.clone()
     elif params['input_image'] == 'hybrid':
         input_img_noise = torch.randn(content_img.data.size(), device=device)
         input_img_content = content_img.clone()
+        input_img_style = style_img.clone()
         w_content = params['hybrid_weight_content']
-        w_noise = 1.0 - w_content
-        input_img = (w_noise * input_img_noise + w_content * input_img_content)
+        w_style = params['hybrid_weight_style']
+        w_noise = 1.0 - (w_content + w_style)
+        assert 0 <= w_content <= 1
+        assert 0 <= w_style <= 1
+        assert w_noise >= 0.0
+        input_img = w_noise * input_img_noise \
+            + w_content * input_img_content \
+            + w_style * input_img_style
     else:
         image = open_image(params['input_image']).resize(content_img.data.size())
         input_img = image_to_tensor(image)
@@ -369,7 +379,7 @@ def run(params,
     content_img = image_to_tensor(content_image, device)
     style_img = image_to_tensor(style_image, device)
 
-    input_img = get_initial_image(params, content_img, device)
+    input_img = get_initial_image(params, content_img, style_img, device)
     cnn, cnn_normalization_mean, cnn_normalization_std = get_model(device)
 
     print('Building the style transfer model..')
@@ -449,11 +459,12 @@ def run(params,
 
 def upload_images():
     if 'google.colab' in str(get_ipython()):
+        # use Google colab file upload widget
         print('Running on CoLab')
         upload_files()
     else:
-        print('Not running on CoLab')
         # use local files
+        print('Not running on CoLab, using existing content, style files')
 
 
 def pipeline():
