@@ -403,6 +403,9 @@ def run(params,
         # Compute the loss and backpropagate to the input_image.
         # (The LBFGS optimizer only accept work through closures.)
 
+        if os.path.isfile('STOPFILE'):
+            break
+
         def closure():
             global history
             global iterations
