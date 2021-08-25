@@ -2,7 +2,8 @@
 
 A program for transferring a style from one image to 
 another using deep learning. 
-(Adapted from another source and refactored and improved).
+Adapted from another source and refactored and improved. 
+(Can't seem to find the original source repo).
 Based on the paper https://arxiv.org/abs/1508.06576.
 
 Made to run with GPUs
@@ -152,6 +153,35 @@ demand_cuda_on_colab: True (This is to ensure that you are using
 GPU on Colab. If not, what's the point of using Colab?. You can just 
 run on your laptop if you want to use CPU). But if you really want,
 you can turn this to False and use CPU on Colab.
+
+Running locally
+----------------
+You can run it locally on your CPU or if you have a GPU (untested
+but should work).
+
+git clone https://github.com/dave31415/restyle.git
+cd restyle
+source install.sh
+
+Now can either run in python, ipython or ipython notebook.
+
+python
+```
+from restyle.pipeline import pipline
+pipeline()
+```
+
+Or
+
+ipython notebook
+
+and open the Pipeline.ipynb notebook
+
+and proceed with 'Run all' (skipping the colab specific steps above)
+
+Now go create some great art!
+
+
 
 
 
