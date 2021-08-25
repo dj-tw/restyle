@@ -42,6 +42,9 @@ def get_params(**kwargs):
               'style_weight': 1.0,
               'total_variation_weight': 10.0,
               'input_image': 'hybrid',
+              'hybrid_weight_content': 0.90,
+              'hybrid_weight_style': 0.0,
+              'show_image_interval': 50,
               'content_layers': ['conv_1', 'conv_2', 'conv_4'],
               'style_layers': ['conv_2', 'conv_3', 'conv_4', 'conv_7', 'conv_10', 'conv_8'],
               'content_image_path': 'content.png',
@@ -51,10 +54,8 @@ def get_params(**kwargs):
               'style_file': 'style.png',
               'content_file': 'content.png',
               'plot_y_range': (0.5, 10000),
-              'hybrid_weight_content': 0.90,
-              'hybrid_weight_style': 0.0,
-              'show_image_interval': 50,
-              'initial_seed': 420}
+              'initial_seed': 420,
+              'demand_cuda_on_colab': True}
 
     # any overrides?
     for k, v in kwargs.items():
@@ -438,6 +439,7 @@ def run(params,
 
             optimizer.step(closure)
         except (Exception, KeyboardInterrupt):
+            # does not work in colab for some reason
             print('Interrupt or exception detected')
             break
 
@@ -471,13 +473,24 @@ def upload_images():
         print('Not running on CoLab, using existing content, style files')
 
 
+def check_device(params):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print('device: %s' % device)
+
+    if 'google.colab' in str(get_ipython()):
+        if device != 'cuda' and params['demand_cuda_on_colab']:
+            raise ValueError("Device is cpu. You want an instance with GPU"
+                             "while running on colab (or change params['demand_cuda_on_colab']"
+                             "to False")
+    return device
+
+
 def pipeline():
     # get parameters, can change any variables with keywords
     params = get_params()
 
     # get the device, cpu or gpu
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print('device: %s' % device)
+    device = check_device()
 
     # upload the images if on Google Colab, otherwise expects
     # to find content.png and style.png in root dir
