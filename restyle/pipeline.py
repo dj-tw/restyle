@@ -51,10 +51,8 @@ def get_params(**kwargs):
               'style_image_path':  'style.png',
               'output_image_path': 'result.png',
               'combined_image_path': 'combined.png',
-              'style_file': 'style.png',
-              'content_file': 'content.png',
               'plot_y_range': (0.5, 10000),
-              'initial_seed': 420,
+              'random_seed': 420,
               'demand_cuda_on_colab': True}
 
     # any overrides?
@@ -78,7 +76,7 @@ def open_image(url):
 
 
 def load_content_image(params):
-    content_image = open_image(params['content_file'])
+    content_image = open_image(params['content_image_path'])
     original_content_image_size = content_image.size
 
     print('Original content image size', original_content_image_size)
@@ -92,7 +90,7 @@ def load_content_image(params):
 
 
 def load_style_image(params):
-    style_image = open_image(params['style_file'])
+    style_image = open_image(params['style_image_path'])
     print('Style image size', style_image.size)
     print('Saving style image')
     style_image.save(params['style_image_path'])
@@ -340,7 +338,7 @@ def show_combined(params):
 
 
 def get_initial_image(params, content_img, style_img, device):
-    torch.manual_seed(params['initial_seed'])
+    torch.manual_seed(params['random_seed'])
     if params['input_image'] == 'noise':
         input_img = torch.randn(content_img.data.size(), device=device)
     elif params['input_image'] == 'content':
@@ -454,7 +452,7 @@ def run(params):
     run_time = (now_time - start_time) / 60.0
     print('Runtime: %0.2f minutes' % run_time)
 
-    img_final = img.resize(original_image_size, resample=Image.BICUBIC)
+    img_final = img.resize(original_content_image_size, resample=Image.BICUBIC)
     img_final.save(params['output_image_path'])
     print('final image size: ', img_final.size)
 
