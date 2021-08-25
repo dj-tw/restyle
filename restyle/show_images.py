@@ -68,5 +68,3 @@ def show_final_results(params, input_img, original_content_image_size):
     plt.title('All images')
     plt.title('Final image')
     plt.imshow(img_final)
-
-    show_combined(params)
