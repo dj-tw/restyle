@@ -368,11 +368,16 @@ def get_initial_image(params, content_img, style_img, device):
     return input_img
 
 
-def run(params,
-        content_image,
-        style_image,
-        device,
-        original_image_size):
+def run(params):
+    device = check_device(params)
+    content_image, original_content_image_size = load_content_image(params)
+    style_image = load_style_image(params)
+
+    # get the content image
+    content_image, original_content_image_size = load_content_image(params)
+
+    # get the style image
+    style_image = load_style_image(params)
 
     global history
     global iterations
@@ -489,22 +494,9 @@ def pipeline():
     # get parameters, can change any variables with keywords
     params = get_params()
 
-    # get the device, cpu or gpu
-    device = check_device()
-
     # upload the images if on Google Colab, otherwise expects
     # to find content.png and style.png in root dir
     upload_images()
 
-    # get the content image
-    content_image, original_content_image_size = load_content_image(params)
-
-    # get the style image
-    style_image = load_style_image(params)
-
     # run the style transfer process
-    run(params,
-        content_image,
-        style_image,
-        device,
-        original_content_image_size)
+    run(params)
