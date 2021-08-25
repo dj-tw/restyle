@@ -160,7 +160,9 @@ You can run it locally on your CPU or if you have a GPU (untested
 but should work).
 
 git clone https://github.com/dave31415/restyle.git
+
 cd restyle
+
 source install.sh
 
 Now can either run in python, ipython or ipython notebook.
