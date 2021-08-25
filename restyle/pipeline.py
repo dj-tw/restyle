@@ -476,15 +476,19 @@ def upload_images():
         print('Not running on CoLab, using existing content, style files')
 
 
+def device_is_cuda(device):
+    return device.__str__() == 'cuda'
+
+
 def check_device(params):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print('device: %s' % device)
 
     if 'google.colab' in str(get_ipython()):
-        if device != 'cuda' and params['demand_cuda_on_colab']:
+        if not device_is_cuda(device) and params['demand_cuda_on_colab']:
             raise ValueError("Device is cpu. You want an instance with GPU"
-                             "while running on colab (or change params['demand_cuda_on_colab']"
-                             "to False")
+                             " while running on colab (or change params['demand_cuda_on_colab']"
+                             " to False")
     return device
 
 
