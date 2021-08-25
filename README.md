@@ -6,7 +6,7 @@ Adapted from another source and refactored and improved.
 (Can't seem to find the original source repo).
 Based on the paper https://arxiv.org/abs/1508.06576.
 
-Made to run with GPUs
+Designed to run on GPUs
 
 ![Kitty](./example_data/combined.png)
 
