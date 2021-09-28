@@ -4,6 +4,26 @@ from PIL import Image
 from io import BytesIO
 import requests
 from restyle.utils import image_to_tensor
+import os
+
+
+def upload_image_file(file_type):
+    assert file_type in {'content', 'style'}
+    if file_type == 'content':
+        save_file_name = params['content_image_path']
+    if file_type == 'style':
+        save_file_name = params['style_image_path']
+
+    # if in Google colab, upload files each time
+    from google.colab import files
+    if os.path.isfile(save_file_name):
+        print('%s file exists' % save_file_name)
+        os.remove(save_file_name)
+
+    uploaded = files.upload()
+    file_name = list(uploaded.keys())[0]
+    image = open_image(file_name)
+    image.save(save_file_name)
 
 
 def get_cnn_model(device):

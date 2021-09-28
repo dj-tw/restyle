@@ -1,6 +1,7 @@
 import os
 from IPython import get_ipython
 from restyle.run_restyle import run
+from restyle.file_io import load_image_file
 
 # global vars, is there a way to avoid this?
 history = []
@@ -73,7 +74,10 @@ def pipeline():
 
     # upload the images if on Google Colab, otherwise expects
     # to find content.png and style.png in root dir
-    upload_images()
+    # upload_images()
+
+    upload_image_file('content')
+    upload_image_file('style')
 
     # run the style transfer process
     run(params)
