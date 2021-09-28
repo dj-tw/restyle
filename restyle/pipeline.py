@@ -61,7 +61,7 @@ def get_params(**kwargs):
 def upload_images():
     if 'google.colab' in str(get_ipython()):
         # use Google colab file upload widget
-        print('Running on CoLab')
+        print('Running on Google CoLab')
         upload_files()
     else:
         # use local files
