@@ -77,7 +77,8 @@ for. But it requires some experimentation.
 
 Parameters
 --------------
-Here are the parameters will useful value and explanation 
+Here are the parameters that will be most useful and some good
+starting values. 
 
 n_iter: 1000 (Number of iterations, a few thousand usually needed)
 
@@ -131,9 +132,7 @@ content_layers: ['conv_1', 'conv_2', 'conv_4']
 
 style_layers: ['conv_2', 'conv_3', 'conv_4', 'conv_7', 'conv_10', 'conv_8']
 
-These four define the file names of the relevant files. 
-Best to leave as is and just rename your local 
-files content.png and style.png.
+These four define the file names of the relevant files once uploaded.
 
 content_image_path: content.png
 
@@ -146,7 +145,7 @@ combined_image_path: combined.png
 plot_y_range: (0.5, 10000) (The y-range used when showing the loss
 plot at the requested intervals. It shows each component.)
 
-random_seed: 420 (The randon seed used if you are making use of 
+random_seed: 420 (The random seed used if you are making use of 
 noise in the initialization.)
 
 demand_cuda_on_colab: True (This is to ensure that you are using
@@ -156,7 +155,7 @@ you can turn this to False and use CPU on Colab.
 
 Running locally
 ----------------
-You can run it locally on your CPU or if you have a GPU (untested
+You can run it locally on your CPU or if you have a GPU (untested, don't have one,
 but should work).
 
 git clone https://github.com/dave31415/restyle.git
