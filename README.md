@@ -75,6 +75,10 @@ to original size at the end regardless. Usually n_iter of a
 few thousand is required to get the full effect that you are looking 
 for. But it requires some experimentation.
 
+Note that uploaded images will persist so you can skip one or both 
+the upload image steps if they are not going to change. For example,
+when just changing params and re-running.
+
 Parameters
 --------------
 Here are the parameters that will be most useful and some good
