@@ -74,10 +74,6 @@ def pipeline():
 
     # upload the images if on Google Colab, otherwise expects
     # to find content.png and style.png in root dir
-    # upload_images()
-
-    upload_image_file('content', params)
-    upload_image_file('style', params)
 
     # run the style transfer process
     run(params)
