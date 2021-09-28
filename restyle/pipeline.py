@@ -1,7 +1,6 @@
 import os
 from IPython import get_ipython
 from restyle.run_restyle import run
-from restyle.file_io import upload_image_file
 
 # global vars, is there a way to avoid this?
 history = []
