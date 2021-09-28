@@ -28,6 +28,7 @@ def upload_image_file(file_type, params):
     file_name = list(uploaded.keys())[0]
     image = open_image(file_name)
     image.save(save_file_name)
+    return image
 
 
 def get_cnn_model(device):
