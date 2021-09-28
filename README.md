@@ -17,7 +17,7 @@ Can be run on Google Colab as follows:
 * Under the File tab choose 'Open notebook'
 * Choose github
 * Enter the address for this repo
-https://github.com/dave31415/restyle and press Return
+https://github.com/dj-tw/restyle and press Return
 * Click on the iPython notebook named Pipeline.ipynb
 * Under Runtime choose, 'Change runtime type' and choose 
 the GPU option
@@ -29,21 +29,21 @@ Will work locally with CPU.
 and run just that cell. Afterwards, comment them out again. 
 Be sure to leave the ! and % symbols in place but leave no
 whitespace before them.
-* Now you are ready to run. However, before you do, you want to 
-gather up the two images you want to use; one for content and one 
-for style. Put these in a local directory (ideally by themselves)
-and ensure they are named content.png and style.png. They must of 
-course be png files. Sizes don't matter as they will be resized 
+* Now you are ready to run. However, before you do, gather up 
+the two images you want to use; one for content and one 
+for style. Sizes don't matter as they will be resized 
 inside of the pipeline. If you want, you can use the two in the 
 example_data directory of this repo. This is my cat (for content) 
 and an artsy photo (for style) that I found somewhere online. 
 * Now, time to run. Under Runtime choose 'Run all'. 
-* This will wait on the upload_images() cell. It is waiting for you
+* This will wait on the content = upload_image_file('content', params) 
+cell. It is waiting for you
 to push the 'Choose Files' button that appears in that cell. Push it!
 * This will bring up a file navigator on your local machine and you 
-should select the style.png and content.png files that you want to 
-use. (On Mac hold the Command button to select a second file 
-without letting go of the first). 
+should select the content files that you want to 
+use.
+* Afterwards do, the same thing for the style image. Don't forget 
+to press the buttons. 
 * After selecting those files and uploading them, the rest of the 
 pipeline will run. It will show you the final image as well 
 as all three. It will be saved as result.png. You can download it by
@@ -57,7 +57,7 @@ of your browser. That should always work.
 
 Iterating
 ------------
-The default run will use a set of default paramters which are 
+The default run will use a set of default parameters which are 
 printed by the get_params() call in the 5th cell. If you want to
 modify any of the parameters, just change it to 
 get_params(n_iter=500), for example and that keyword will 
