@@ -7,7 +7,11 @@ from restyle.utils import image_to_tensor
 import os
 
 
-def upload_image_file(file_type):
+def upload_image_file(file_type, params):
+    if 'google.colab' not in str(get_ipython()):
+        print('Using local file')
+        return
+
     assert file_type in {'content', 'style'}
     if file_type == 'content':
         save_file_name = params['content_image_path']
