@@ -12,6 +12,7 @@ def upload_image_file(file_type, params):
         print('Using local file')
         return
 
+    save_file_name = None
     assert file_type in {'content', 'style'}
     if file_type == 'content':
         save_file_name = params['content_image_path']
@@ -47,8 +48,23 @@ def open_image(url):
         return Image.open(url).convert('RGB')
 
 
+def get_image_file(params, file_type):
+    assert file_type in {'content', 'style'}
+    if file_type == 'content':
+        file = params['content_image_path']
+    else:
+        file = params['style_image_path']
+
+    if not os.path.isfile(file):
+        # use the provided defaults
+        file = "%s/%s" % ('example_data', file)
+
+    return file
+
+
 def load_content_image(params):
-    content_image = open_image(params['content_image_path'])
+    content_file = get_image_file(params, 'content')
+    content_image = open_image(content_file)
     original_content_image_size = content_image.size
 
     print('Original content image size', original_content_image_size)
@@ -62,7 +78,8 @@ def load_content_image(params):
 
 
 def load_style_image(params):
-    style_image = open_image(params['style_image_path'])
+    style_file = get_image_file(params, 'style')
+    style_image = open_image(style_file)
     print('Style image size', style_image.size)
     print('Saving style image')
     style_image.save(params['style_image_path'])

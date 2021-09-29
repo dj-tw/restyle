@@ -172,9 +172,12 @@ Now can either run in python, ipython or ipython notebook.
 
 python
 ```
-from restyle.pipeline import pipline
+from restyle.pipeline import pipeline
 pipeline()
 ```
+
+That will use the default content and images files (in example_data)
+if 'content.png' and 'style.png' are not found in current dir.
 
 Or
 
